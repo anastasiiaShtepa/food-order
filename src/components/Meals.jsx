@@ -1,30 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import MealItem from "./MealItem";
+import useHttp from "./hooks/useHttp";
 
-
+const requestConfig = {}
 
 const Meals = () => {
-  const [loadedMeals, setLoadedMeals] = useState([]);
-
-  useEffect(() => {
-    async function fetchMeals() {
-      try {
-        const response = await fetch("http://localhost:3000/meals");
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch meals!");
-        }
-
-        const meals = await response.json();
-        setLoadedMeals(meals);
-      } catch (error) {
-        console.error(error);
-      }
-    }
-
-    fetchMeals();
-  }, []); // Empty dependency array to run the effect only once
-
+  const {
+    data: loadedMeals,
+    isLoading,
+    error,
+  } = useHttp("http://localhost:3000/meals", requestConfig, []);
+  if (isLoading) {
+    return <p>Fetching meals...</p>;
+  }
   return (
     <ul id="meals">
       {loadedMeals.map((meal) => (
